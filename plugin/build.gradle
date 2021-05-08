@@ -1,0 +1,55 @@
+plugins {
+	id "java-library"
+	id "java-gradle-plugin"
+	id "maven-publish"
+	// TODO: License headers with spotless
+}
+
+group = "org.quiltmc"
+version "0.1.0"
+
+repositories {
+	mavenCentral()
+
+	maven {
+		name = "Quilt"
+		url = "https://maven.quiltmc.org/repository/release"
+	}
+}
+
+dependencies {
+	implementation gradleApi()
+	compileOnly("org.jetbrains:annotations:20.1.0")
+
+	testImplementation(platform("org.junit:junit-bom:5.7.1"))
+	testImplementation("org.junit.jupiter:junit-jupiter")
+
+	api("org.quiltmc:tiny-remapper:0.3.2")
+}
+
+tasks.withType(JavaCompile).configureEach {
+	if (JavaVersion.current().isJava9Compatible()) {
+		options.release.set(8)
+	} else {
+		sourceCompatibility = JavaVersion.VERSION_1_8
+		targetCompatibility = JavaVersion.VERSION_1_8
+	}
+}
+
+test {
+	useJUnitPlatform()
+
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+gradlePlugin {
+	plugins {
+		quiltGradlePlugin {
+			id = "org.quiltmc.gradle"
+			implementationClass = "org.quiltmc.gradle.internal.GradlePlugin"
+			version = project.version
+		}
+	}
+}

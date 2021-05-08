@@ -1,0 +1,42 @@
+// This is to emulate the plugin management block that is required in test projects
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+
+		maven {
+			name = "Quilt"
+			url = "https://maven.quiltmc.org/repository/release"
+		}
+	}
+}
+
+rootProject.name = 'gradle-plugin'
+
+// Here we include the gradle plugin itself as an included build so that test projects can depend directly on the plugin
+// while retaining IDE features such as syntax completion in plugin apis.
+//
+// Tests will be run using the gradle runner though.
+includeBuild("plugin")
+
+// Now we setup our test projects
+// We have test projects for both groovy dsl and kotlin dsl.
+//
+// Test projects are automatically included upon creation.
+// To disable a test project, create a `DISABLE` file in the directory of the project.
+def setupTestProjects(File file, String category) {
+	file.eachDir { dir ->
+		if (dir.isDirectory() && !new File(dir, "DISABLE").exists()) {
+			def name = dir.name;
+
+			include(name)
+			def project = project(":$dir.name")
+			project.projectDir = dir
+			project.name = "$category-$name"
+		}
+	}
+}
+
+// TODO: Do we want to have an `example/DSL` project?
+setupTestProjects(file("test-projects/groovy"), "groovy")
+setupTestProjects(file("test-projects/kotlin"), "kotlin")
