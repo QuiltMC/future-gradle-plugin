@@ -33,3 +33,6 @@ $RECYCLE.BIN/
 
 # macOS
 .DS_Store
+
+# We want the run config package lol
+!/plugin/src/main/java/org/quiltmc/gradle/api/run
