@@ -36,3 +36,4 @@ $RECYCLE.BIN/
 
 # We want the run config package lol
 !/plugin/src/main/java/org/quiltmc/gradle/api/run
+!/plugin/src/main/java/org/quiltmc/gradle/internal/run
